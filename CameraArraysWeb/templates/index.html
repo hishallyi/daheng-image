@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera Control</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+<div class="container">
+    <div class="sidebar">
+        <h2>Camera Parameters</h2>
+        <form id="camera-form">
+            <label for="exposure_time">Exposure Time (us):</label>
+            <input type="number" id="exposure_time" name="exposure_time" value="10000.0">
+
+            <label for="white_balance">White Balance:</label>
+            <select id="white_balance" name="white_balance">
+                <option value="CONTINUOUS">Continuous</option>
+                <option value="OFF">Off</option>
+            </select>
+
+            <button type="button" onclick="setParameters()">Apply Settings</button>
+        </form>
+    </div>
+
+    <div class="main-content">
+        <h2>Camera Preview</h2>
+        <select id="camera-select" onchange="updatePreview()">
+            {% for serial in camera_serials %}
+            <option value="{{ serial }}">{{ serial }}</option>
+            {% endfor %}
+        </select>
+        <img id="camera-preview" src="" alt="Camera Preview">
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+</body>
+</html>
