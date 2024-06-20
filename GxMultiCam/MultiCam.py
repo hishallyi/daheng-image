@@ -12,7 +12,7 @@ from gxipy.gxidef import *
 import numpy
 from gxipy.ImageFormatConvert import *
 
-device_num = 2  # Maximum number of supported display devices
+device_num = 3  # Maximum number of supported display devices
 thread_flag = [0, 1]  # Thread start stop thread flag array
 thread_cam = [0, 1]  # Thread array
 
@@ -43,7 +43,7 @@ class MultiCam(QMainWindow, MultiCamDlg.Ui_MultiCamDlg):
             # Enumerating cameras
             self.device_manager = gx.DeviceManager()
             self.dev_num, self.dev_info_list = self.device_manager.update_all_device_list()
-            if self.dev_num is 0:
+            if self.dev_num == 0:
                 QMessageBox.warning(self, "Warning dialog box",
                                     "No devices listed, please insert the camera and restart the program!")
                 self.__enable_open = False
@@ -55,7 +55,7 @@ class MultiCam(QMainWindow, MultiCamDlg.Ui_MultiCamDlg):
         # Default display of the first camera
         self.device_list_box.itemText(0)
 
-        # The maximum number of devices is 2
+        # The maximum number of devices is 3
         if self.dev_num >= device_num:
             self.__number = device_num
         else:
