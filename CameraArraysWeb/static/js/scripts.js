@@ -1,7 +1,10 @@
 function setParameters() {
-    var form = document.getElementById('camera-form');
-    var formData = new FormData(form);
+    // TODO：目前无法获取到表单数据，需要调试
+    const form = document.getElementById('camera-form');
+    const formData = new FormData(form);
+    console.log(formData);
 
+    // TODO：发送post请求失败，需要调试
     fetch('/set_parameters', {
         method: 'POST',
         body: formData
@@ -22,8 +25,8 @@ function setParameters() {
 }
 
 function updatePreview() {
-    var select = document.getElementById('camera-select');
-    var serial = select.value;
+    const select = document.getElementById('camera-select');
+    const serial = select.value;
     fetch(`/capture_image/${serial}`)
         .then(response => response.json())
         .then(data => {
