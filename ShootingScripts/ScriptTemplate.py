@@ -85,7 +85,8 @@ def main():
         img = Image.fromarray(numpy_image, 'RGB')  # 展示获取的图像
         # img.show()
         mtime = datetime.datetime.now().strftime('%Y-%m-%d_%H_%M_%S')
-        img.save(r"D:\FileDevelop\Datasets\Galaxy\CaptureByScripts\\" + mtime + str("-") + str(i) + ".jpg")  # 保存图片到本地
+        img.save(r"D:\FileDevelop\DevelopTools\Pycharm\DaHengImage\Galaxy\CaptureByScripts\\" + mtime + str("-") + str(
+            i) + ".jpg")  # 保存图片到本地
         print("Frame ID: %d   Height: %d   Width: %d   framerate_set:%dfps   framerate_get:%dfps"
               % (raw_image.get_frame_id(), raw_image.get_height(), raw_image.get_width(), framerate_set,
                  framerate_get))  # 打印采集的图像的高度、宽度、帧ID、用户设置的帧率、当前采集到的帧率
