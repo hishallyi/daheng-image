@@ -10,6 +10,7 @@ import cv2
 import gxipy as gx
 from PIL import Image
 import datetime
+import tkinter as tk
 
 # 指定Python解释器路径
 work_path = os.path.abspath('')
@@ -39,19 +40,6 @@ def print_variable(var_name, var):
     @return: null
     """
     print("********** %s: %s **********" % (var_name, var))
-
-
-def save_images(final_img, saved_path):
-    """
-    保存图像
-    @param final_img: Image库从Array转换的图像
-    @param i: 图像编号
-    @param saved_path: 图像保存路径
-    @return: null
-    """
-    mtime = datetime.datetime.now().strftime('%Y-%m-%d_%H_%M_%S')
-    # final_img.save(saved_path + mtime + str("-") + str(i) + ".jpg")  # 保存图片到本地
-    final_img.save(saved_path + mtime + str("-") + ".jpg")  # 保存图片到本地
 
 
 def camera_params_setting(cam):
@@ -101,18 +89,25 @@ def camera_params_setting(cam):
 
 
 # 定义参数更新的回调函数
-def update_exposure_time(val):
+def update_white_balance_ratio_callback(val):
+    cam.BalanceWhiteAuto.set(gx.GxAutoEntry.ONCE)
+
+
+def update_exposure_time_callback(val):
     cam.ExposureTime.set(val)
 
 
-def update_gain(val):
+def update_gain_callback(val):
     cam.Gain.set(val)
 
 
-def acquisition_setting(cam, saved_path):
+def update_black_level_callback(val):
+    cam.BlackLevel.set(val)
+
+
+def acquisition_setting():
     """
     相机采集过程设置
-    @param cam: 相机对象
     @return: 保存采集图像
     """
     # 设备配置信息
@@ -125,30 +120,36 @@ def acquisition_setting(cam, saved_path):
     # 导入相机配置参数
     remote_device_feature.feature_load("camera_config_file.txt")
 
-    # 创建窗口和滑动条
-    window_height = 816
-    window_width = 683
-    cv2.namedWindow('Live Image')
-    cv2.resizeWindow('Live Image', window_height, window_width)  # 设置窗口大小
-    cv2.moveWindow('Live Image', 100, 100)  # 设置窗口位置
-
-    cv2.createTrackbar('Exposure Time', 'Live Image', 1000000, 1000000, update_exposure_time)
-    cv2.createTrackbar('Gain', 'Live Image', 4, 10, update_gain)
+    # 创建滑动条
+    # cv2.createTrackbar('WhiteBalance Ratio', 'Live Image', 0.5, 1, update_white_balance_ratio_callback)
+    # cv2.createTrackbar('Exposure Time', 'Live Image', 1000000, 1000000, update_exposure_time_callback)
+    # cv2.createTrackbar('Gain', 'Live Image', 4, 10, update_gain_callback)
 
     # 拍摄图像
     cam.stream_on()
 
     # 打印相机采集流信息
     # print_variable("相机采集流信息 cam.data_stream", cam.data_stream)  # [<gxipy.DataStream.DataStream object at 0x000001B9E6CABEB0>]
-    # print_variable("相机采集信息流 cam.data_stream 的数量", len(cam.data_stream))  # 1
+    # 获取通道数
+    # int_channel_num = cam.get_stream_channel_num()  # 1
 
-    global img
+    global img, frame_get
 
     while True:
-        raw_image = cam.data_stream[0].get_image()
+        # 获取输入框的值
+        white_balance_ratio = float(white_balance_entry.get())
+        exposure_time = int(exposure_time_entry.get())
+        gain = float(gain_entry.get())
+        black_level = int(black_level_entry.get())
 
-        frame_get = cam.CurrentAcquisitionFrameRate.get()
+        # 更新相机参数
+        cam.BalanceRatio.set(white_balance_ratio)
+        cam.ExposureTime.set(exposure_time)
+        cam.Gain.set(gain)
+        cam.BlackLevel.set(black_level)
 
+        frame_get = cam.CurrentAcquisitionFrameRate.get()  # 当前采集帧率
+        raw_image = cam.data_stream[0].get_image()  # 采集raw_image
         if raw_image is None:
             print_promotion("raw_image图像获取失败！")
             continue
@@ -167,11 +168,16 @@ def acquisition_setting(cam, saved_path):
         if cv2.waitKey(1) & 0xFF == ord('q'):  # 按 'q' 键退出
             break
 
-    save_images(img, saved_path)
+    cam.stream_off()
+
+
+def save_images():
+    saved_path = "D:\FileDevelop\DevelopTools\Pycharm\DaHengImage\Galaxy\CaptureByScripts\\"  # 图像保存路径
+    mtime = datetime.datetime.now().strftime('%Y-%m-%d_%H_%M_%S')
+    img.save(saved_path + mtime + str("-") + ".jpg")  # 保存图片到本地
+
     # print_promotion("第 %s 张图像保存成功！当前采集帧率为 %s " % (i + 1, frame_get))
     print_promotion("图像保存成功！当前采集帧率为 %s " % frame_get)
-
-    cam.stream_off()
 
 
 if __name__ == "__main__":
@@ -191,8 +197,44 @@ if __name__ == "__main__":
     print_promotion("相机参数设置完成！等待5秒后开始采集图像！")
     time.sleep(5)  # 参数设置完成之后需要等待5秒
 
-    saved_path = "D:\FileDevelop\DevelopTools\Pycharm\DaHengImage\Galaxy\CaptureByScripts\\"  # 图像保存路径
-    acquisition_setting(cam, saved_path)  # 采集过程设置
+    # 创建OpenCV窗口
+    window_height = 816
+    window_width = 683
+    cv2.namedWindow('Live Image')
+    cv2.resizeWindow('Live Image', window_height, window_width)  # 设置窗口大小
+    cv2.moveWindow('Live Image', 100, 100)  # 设置窗口位置
+
+    # 创建Tkinter窗口
+    root = tk.Tk()
+    root.title("Camera Settings")
+
+    # 创建输入框和标签
+    tk.Label(root, text="White Balance Ratio").grid(row=0, column=0)
+    white_balance_entry = tk.Entry(root)
+    white_balance_entry.grid(row=0, column=1)
+
+    tk.Label(root, text="Exposure Time").grid(row=1, column=0)
+    exposure_time_entry = tk.Entry(root)
+    exposure_time_entry.grid(row=1, column=1)
+
+    tk.Label(root, text="Gain").grid(row=2, column=0)
+    gain_entry = tk.Entry(root)
+    gain_entry.grid(row=2, column=1)
+
+    tk.Label(root, text="Black Level").grid(row=3, column=0)
+    black_level_entry = tk.Entry(root)
+    black_level_entry.grid(row=3, column=1)
+
+    # 创建确认按钮
+    confirm_button = tk.Button(root, text="Confirm", command=acquisition_setting)
+    confirm_button.grid(row=4, columnspan=2)
+
+    # 创建存图按钮
+    save_image_button = tk.Button(root, text="Save Image", command=save_images)
+    confirm_button.grid(row=5, columnspan=2)
+
+    # 启动Tkinter主循环
+    root.mainloop()
 
     # 关闭相机
     cam.close_device()
