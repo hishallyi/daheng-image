@@ -8,38 +8,16 @@ import os
 import time
 import cv2
 import gxipy as gx
-from PIL import Image
 import datetime
 import tkinter as tk
+
+from PIL import Image
+from utils import *
 
 # 指定Python解释器路径
 work_path = os.path.abspath('')
 project_path = os.path.dirname(work_path)
 sys.path.append(project_path)
-
-
-def print_promotion(message):
-    """
-    打印提示信息
-    @param message: 提示信息
-    @return: null
-    """
-    print("")
-    print("-------------------------------------------------------------")
-    if message is not None:
-        print(message)
-    print("-------------------------------------------------------------")
-    print("")
-
-
-def print_variable(var_name, var):
-    """
-    打印变量信息
-    @param var_name: 变量名
-    @param var: 变量值
-    @return: null
-    """
-    print("********** %s: %s **********" % (var_name, var))
 
 
 def camera_params_setting(cam):
