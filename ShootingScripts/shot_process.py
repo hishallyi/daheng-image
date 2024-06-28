@@ -1,8 +1,9 @@
 """
 @Author  ：Hishallyi
 @Date    ：2024/6/26
-@Code    : 拍摄流程
+@Code    : 单个相机，使用cv2结合tkinter实时显示图像
 """
+
 import sys
 import os
 import time

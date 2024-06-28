@@ -3,6 +3,7 @@
 @Date    ：2024/6/12
 @Code    : 相机拍摄脚本demo1
 """
+
 import gxipy as gx
 from PIL import Image
 import datetime
