@@ -6,7 +6,7 @@
 
 import datetime
 
-from PIL import Image
+from PIL import Image, ImageTk
 
 
 def print_promotion(message):
