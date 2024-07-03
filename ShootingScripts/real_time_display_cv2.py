@@ -1,7 +1,7 @@
 """
 @Author : Hishallyi
 @Date   : 2024/6/27
-@Code   : 单个相机，仅使用cv2+滑动条来实时显示图像
+@Code   : 连接单个相机，仅使用cv2+滑动条来实时显示图像
 """
 
 import sys
